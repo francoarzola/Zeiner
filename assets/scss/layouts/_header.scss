@@ -1,0 +1,200 @@
+// main: ../main.scss
+/*--------------------------------------------------------------
+# Global Header
+--------------------------------------------------------------*/
+.header {
+  --background-color: rgba(255, 255, 255, 0);
+  color: var(--default-color);
+  background-color: transparent;
+  padding: 20px 0;
+  transition: all 0.4s ease;
+  z-index: 997;
+
+  .header-container {
+    background: rgba(247, 249, 248, 0.88);
+    padding: 12px 26px;
+    border-radius: 10px;
+    box-shadow:
+      0 18px 45px rgba(8, 10, 12, 0.07),
+      0 2px 8px rgba(8, 10, 12, 0.03);
+    border: 1px solid rgba(167, 173, 179, 0.24);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+
+  .logo {
+    line-height: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+
+    .logo-img {
+      max-height: 52px;
+      width: auto;
+      display: block;
+      object-fit: contain;
+    }
+
+    h1,
+    .sitename {
+      font-size: 24px;
+      margin: 0;
+      font-weight: 700;
+      color: #1B1F23;
+      letter-spacing: -0.02em;
+    }
+  }
+
+  .header-actions {
+    gap: 14px;
+    margin-left: 24px;
+    flex-shrink: 0;
+  }
+
+  .phone-link,
+  .phone-link:focus {
+    color: rgba(27, 31, 35, 0.82);
+    font-size: 14px;
+    font-weight: 650;
+    gap: 8px;
+    white-space: nowrap;
+    transition: 0.3s ease;
+    text-decoration: none;
+
+    i {
+      color: #0F6B35;
+      font-size: 15px;
+      opacity: 0.9;
+    }
+
+    &:hover {
+      color: #0F6B35;
+    }
+  }
+
+  .btn-getstarted,
+  .btn-getstarted:focus {
+    color: #0F6B35;
+    background: rgba(15, 107, 53, 0.065);
+    border: 1px solid rgba(15, 107, 53, 0.22);
+    font-size: 14px;
+    font-weight: 700;
+    padding: 9px 18px;
+    margin: 0;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    line-height: 1;
+    white-space: nowrap;
+    transition: 0.28s ease;
+    text-decoration: none;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+
+    i {
+      font-size: 16px;
+      line-height: 0;
+    }
+
+    &:hover {
+      color: #ffffff;
+      background: #0F6B35;
+      border-color: #0F6B35;
+      box-shadow:
+        0 10px 24px rgba(15, 107, 53, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      transform: translateY(-1px);
+    }
+  }
+
+  @media (max-width: 1199px) {
+    padding: 12px 0;
+
+    .header-container {
+      margin-left: 12px;
+      margin-right: 12px;
+      padding: 10px 12px 10px 16px;
+      border-radius: 10px;
+    }
+
+    .logo {
+      order: 1;
+
+      .logo-img {
+        max-height: 44px;
+      }
+    }
+
+    .header-actions {
+      order: 2;
+      margin-left: auto;
+      margin-right: 8px;
+      gap: 8px;
+    }
+
+    .btn-getstarted,
+    .btn-getstarted:focus {
+      padding: 8px 13px;
+      font-size: 13px;
+      border-radius: 8px;
+    }
+
+    .navmenu {
+      order: 3;
+    }
+  }
+
+  @media (max-width: 575px) {
+    padding: 10px 0;
+
+    .header-container {
+      margin-left: 10px;
+      margin-right: 10px;
+      padding: 8px 8px 8px 11px;
+      border-radius: 9px;
+    }
+
+    .logo {
+      .logo-img {
+        max-height: 36px;
+        max-width: 195px;
+        object-fit: contain;
+      }
+    }
+
+    .header-actions {
+      margin-left: auto;
+      margin-right: 4px;
+      gap: 6px;
+    }
+
+    .btn-getstarted,
+    .btn-getstarted:focus {
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      justify-content: center;
+      border-radius: 8px;
+
+      i {
+        font-size: 18px;
+      }
+    }
+  }
+
+  @media (max-width: 390px) {
+    .logo {
+      .logo-img {
+        max-height: 34px;
+        max-width: 170px;
+      }
+    }
+
+    .btn-getstarted,
+    .btn-getstarted:focus {
+      width: 36px;
+      height: 36px;
+    }
+  }
+}

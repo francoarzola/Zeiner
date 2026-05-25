@@ -1,0 +1,242 @@
+// main: ../main.scss
+/*--------------------------------------------------------------
+# Services Section
+--------------------------------------------------------------*/
+.services {
+  padding: 96px 0 104px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 1), rgba(247, 249, 248, 1));
+
+  .services-intro {
+    margin-bottom: 38px;
+  }
+
+  .diagnostic-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    padding: 24px 26px;
+    border-radius: 16px;
+    background: rgba(15, 107, 53, 0.065);
+    border: 1px solid rgba(15, 107, 53, 0.18);
+    box-shadow: 0 12px 28px rgba(8, 10, 12, 0.045);
+
+    .diagnostic-icon {
+      width: 48px;
+      height: 48px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      border-radius: 12px;
+      color: #ffffff;
+      background: #0F6B35;
+      font-size: 1.35rem;
+      box-shadow: 0 10px 22px rgba(15, 107, 53, 0.22);
+    }
+
+    h3 {
+      font-size: 1.18rem;
+      font-weight: 850;
+      color: #1B1F23;
+      margin-bottom: 6px;
+      letter-spacing: -0.02em;
+    }
+
+    p {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: rgba(27, 31, 35, 0.68);
+      margin: 0;
+    }
+  }
+
+  .services-list {
+    row-gap: 0;
+  }
+
+  .service-item {
+    height: 100%;
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    padding: 34px 0;
+    border-bottom: 1px solid rgba(167, 173, 179, 0.24);
+    transition: 0.28s ease;
+  }
+
+  .service-num {
+    font-size: 38px;
+    font-weight: 800;
+    line-height: 1;
+    color: rgba(15, 107, 53, 0.18);
+    flex-shrink: 0;
+    min-width: 58px;
+    font-family: var(--heading-font);
+    letter-spacing: -0.05em;
+  }
+
+  .service-body {
+    position: relative;
+    padding-right: 18px;
+
+    .service-icon {
+      width: 42px;
+      height: 42px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      color: #0F6B35;
+      background: rgba(15, 107, 53, 0.08);
+      font-size: 1.3rem;
+      margin-bottom: 16px;
+      transition: 0.28s ease;
+    }
+
+    h3 {
+      font-size: 1.22rem;
+      font-weight: 850;
+      margin-bottom: 12px;
+      line-height: 1.28;
+      color: #1B1F23;
+      letter-spacing: -0.02em;
+    }
+
+    p {
+      font-size: 0.95rem;
+      line-height: 1.72;
+      color: rgba(27, 31, 35, 0.68);
+      margin-bottom: 16px;
+    }
+  }
+
+  .service-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: #0F6B35;
+    text-decoration: none;
+    transition: 0.28s ease;
+
+    i {
+      font-size: 0.85rem;
+      transition: transform 0.28s ease;
+    }
+
+    &:hover {
+      color: #1E7C3B;
+
+      i {
+        transform: translateX(4px);
+      }
+    }
+  }
+
+  .service-item:hover {
+    transform: translateY(-3px);
+
+    .service-num {
+      color: rgba(15, 107, 53, 0.28);
+    }
+
+    .service-icon {
+      color: #ffffff;
+      background: #0F6B35;
+      box-shadow: 0 10px 22px rgba(15, 107, 53, 0.18);
+    }
+  }
+
+  @media (min-width: 992px) {
+    .row.services-list>[class*="col-"]:nth-last-child(-n + 2) {
+      .service-item {
+        border-bottom: none;
+      }
+    }
+  }
+
+  @media (max-width: 991px) {
+    padding: 78px 0 88px;
+
+    .services-intro {
+      margin-bottom: 26px;
+    }
+
+    .service-item {
+      padding: 30px 0;
+    }
+
+    .service-body {
+      padding-right: 0;
+    }
+  }
+
+  @media (max-width: 767px) {
+    padding: 64px 0 72px;
+
+    .diagnostic-note {
+      padding: 20px 18px;
+      gap: 14px;
+      border-radius: 14px;
+
+      .diagnostic-icon {
+        width: 42px;
+        height: 42px;
+        font-size: 1.15rem;
+        border-radius: 10px;
+      }
+
+      h3 {
+        font-size: 1.05rem;
+      }
+
+      p {
+        font-size: 0.9rem;
+      }
+    }
+
+    .service-item {
+      padding: 28px 0;
+      gap: 18px;
+    }
+
+    .service-num {
+      font-size: 31px;
+      min-width: 44px;
+    }
+
+    .service-body {
+      .service-icon {
+        width: 38px;
+        height: 38px;
+        font-size: 1.12rem;
+        margin-bottom: 14px;
+      }
+
+      h3 {
+        font-size: 1.08rem;
+      }
+
+      p {
+        font-size: 0.9rem;
+      }
+    }
+  }
+
+  @media (max-width: 575px) {
+    .diagnostic-note {
+      flex-direction: column;
+    }
+
+    .service-item {
+      gap: 14px;
+    }
+
+    .service-num {
+      font-size: 28px;
+      min-width: 38px;
+    }
+  }
+}
