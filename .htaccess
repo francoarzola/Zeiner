@@ -7,6 +7,9 @@ Options -Indexes
 # Pagina 404 personalizada.
 ErrorDocument 404 /404.html
 
+# Pagina comun para accesos bloqueados.
+ErrorDocument 403 /404.html
+
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
@@ -18,6 +21,9 @@ ErrorDocument 404 /404.html
 
   # Bloquear archivos ocultos, sin bloquear .well-known usado por SSL/validaciones.
   RewriteRule (^|/)\.(?!well-known/) - [F]
+
+  # Bloquear carpetas internas si por error se suben a public_html.
+  RewriteRule ^(storage|docs)(/|$) - [F]
 </IfModule>
 
 # Bloqueo de archivos de desarrollo, respaldos, fuentes o datos sensibles.
