@@ -1,41 +1,219 @@
 <?php
-  /**
-  * Requires the "PHP Email Form" library
-  * The "PHP Email Form" library is available only in the pro version of the template
-  * The library should be uploaded to: vendor/php-email-form/php-email-form.php
-  * For more info and help: https://bootstrapmade.com/php-email-form/
-  */
+declare(strict_types=1);
 
-  $receiving_email_address = 'contacto@zeiner.cl';
+const RECEIVING_EMAIL = 'contacto@zeiner.cl';
+const FROM_EMAIL = 'no-reply@zeiner.cl';
+const FROM_NAME = 'Sitio web ZEINER Electronica';
+const SUBJECT = 'Nueva consulta desde sitio web ZEINER Electrónica';
+const MIN_FORM_SECONDS = 3;
+const RATE_LIMIT_MAX = 5;
+const RATE_LIMIT_WINDOW = 3600;
 
-  if( file_exists($php_email_form = '../assets/vendor/php-email-form/php-email-form.php' )) {
-    include( $php_email_form );
-  } else {
-    die( 'Unable to load the "PHP Email Form" Library!');
+header('Content-Type: text/plain; charset=UTF-8');
+
+$allowed_services = [
+  'Televisor',
+  'Iluminación LED',
+  'Lavadora',
+  'Refrigerador',
+  'Equipo de música',
+  'Consola',
+  'Electrónica general',
+  'Diagnóstico a domicilio',
+];
+
+function fail(int $status = 400): void
+{
+  http_response_code($status);
+  echo 'No fue posible enviar el mensaje. Inténtalo nuevamente o contáctanos por WhatsApp.';
+  exit;
+}
+
+function ok(): void
+{
+  echo 'OK';
+  exit;
+}
+
+function text_field(string $key, int $min, int $max, bool $required = true): string
+{
+  $value = isset($_POST[$key]) && is_string($_POST[$key]) ? trim($_POST[$key]) : '';
+  $value = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]+/u', '', $value) ?? '';
+  $value = preg_replace('/[ \t]+/', ' ', $value) ?? '';
+
+  $length = text_length($value);
+  if ($required && $length < $min) {
+    fail();
   }
 
-  $contact = new PHP_Email_Form;
-  $contact->ajax = true;
-  
-  $contact->to = $receiving_email_address;
-  $contact->from_name = $_POST['name'];
-  $contact->from_email = $_POST['email'];
-  $contact->subject = $_POST['subject'];
+  if ($length > $max) {
+    fail();
+  }
 
-  // Uncomment below code if you want to use SMTP to send emails. You need to enter your correct SMTP credentials
-  /*
-  $contact->smtp = array(
-    'host' => 'example.com',
-    'username' => 'example',
-    'password' => 'pass',
-    'port' => '587'
-  );
-  */
+  return $value;
+}
 
-  $contact->add_message( $_POST['name'], 'From');
-  $contact->add_message( $_POST['email'], 'Email');
-  isset($_POST['phone']) && $contact->add_message($_POST['phone'], 'Phone');
-  $contact->add_message( $_POST['message'], 'Message', 10);
+function text_length(string $value): int
+{
+  return function_exists('mb_strlen') ? mb_strlen($value, 'UTF-8') : strlen($value);
+}
 
-  echo $contact->send();
-?>
+function text_cut(string $value, int $max): string
+{
+  return function_exists('mb_substr') ? mb_substr($value, 0, $max, 'UTF-8') : substr($value, 0, $max);
+}
+
+function reject_header_injection(string $value): void
+{
+  if (preg_match('/[\r\n]/', $value)) {
+    fail();
+  }
+}
+
+function client_ip(): string
+{
+  $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+  return preg_replace('/[^a-fA-F0-9:\.]/', '', $ip) ?: 'unknown';
+}
+
+function rate_limit_check(string $ip): void
+{
+  $hash = hash('sha256', $ip);
+  $file = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'zeiner_contact_' . $hash . '.json';
+  $now = time();
+  $events = [];
+
+  $handle = @fopen($file, 'c+');
+  if ($handle === false) {
+    return;
+  }
+
+  try {
+    if (flock($handle, LOCK_EX)) {
+      $contents = stream_get_contents($handle);
+      $decoded = json_decode($contents ?: '[]', true);
+      if (is_array($decoded)) {
+        $events = array_filter($decoded, static function ($timestamp) use ($now): bool {
+          return is_int($timestamp) && $timestamp > ($now - RATE_LIMIT_WINDOW);
+        });
+      }
+
+      if (count($events) >= RATE_LIMIT_MAX) {
+        flock($handle, LOCK_UN);
+        fclose($handle);
+        fail(429);
+      }
+
+      $events[] = $now;
+      ftruncate($handle, 0);
+      rewind($handle);
+      fwrite($handle, json_encode(array_values($events)));
+      fflush($handle);
+      flock($handle, LOCK_UN);
+    }
+  } finally {
+    if (is_resource($handle)) {
+      fclose($handle);
+    }
+  }
+}
+
+function safe_html(string $value): string
+{
+  return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+}
+
+function safe_header_text(string $value): string
+{
+  reject_header_injection($value);
+  return trim($value);
+}
+
+if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+  fail(405);
+}
+
+if (!empty($_POST['website'] ?? '')) {
+  ok();
+}
+
+$started_at = isset($_POST['form_started_at']) && is_string($_POST['form_started_at']) ? (int) $_POST['form_started_at'] : 0;
+if ($started_at <= 0 || (time() - $started_at) < MIN_FORM_SECONDS || (time() - $started_at) > 86400) {
+  fail();
+}
+
+rate_limit_check(client_ip());
+
+$name = text_field('name', 2, 80);
+$phone = text_field('phone', 7, 30);
+$email = text_field('email', 0, 120, false);
+$service = text_field('subject', 2, 60);
+$message = text_field('message', 10, 1500);
+
+if (!preg_match('/^\+?[0-9\s\-\(\)]{7,30}$/', $phone)) {
+  fail();
+}
+
+if (!in_array($service, $allowed_services, true)) {
+  fail();
+}
+
+$validated_email = '';
+if ($email !== '') {
+  reject_header_injection($email);
+  $validated_email = filter_var($email, FILTER_VALIDATE_EMAIL) ? $email : '';
+  if ($validated_email === '') {
+    fail();
+  }
+}
+
+safe_header_text($name);
+safe_header_text($phone);
+safe_header_text($service);
+
+$ip = client_ip();
+$user_agent = text_field_from_server('HTTP_USER_AGENT', 0, 180);
+$date = date('Y-m-d H:i:s');
+
+$body = '<p>Datos enviados desde el formulario web de ZEINER Electrónica.</p>';
+$body .= '<table cellpadding="6" cellspacing="0" border="0">';
+$body .= '<tr><td><strong>Nombre</strong></td><td>' . safe_html($name) . '</td></tr>';
+$body .= '<tr><td><strong>Email</strong></td><td>' . safe_html($email !== '' ? $email : 'No informado') . '</td></tr>';
+$body .= '<tr><td><strong>Teléfono</strong></td><td>' . safe_html($phone) . '</td></tr>';
+$body .= '<tr><td><strong>Tipo de equipo/servicio</strong></td><td>' . safe_html($service) . '</td></tr>';
+$body .= '<tr><td><strong>Mensaje</strong></td><td>' . nl2br(safe_html($message)) . '</td></tr>';
+$body .= '<tr><td><strong>IP</strong></td><td>' . safe_html($ip) . '</td></tr>';
+$body .= '<tr><td><strong>Fecha/hora servidor</strong></td><td>' . safe_html($date) . '</td></tr>';
+$body .= '<tr><td><strong>User agent</strong></td><td>' . safe_html($user_agent) . '</td></tr>';
+$body .= '</table>';
+
+$headers = [];
+$headers[] = 'MIME-Version: 1.0';
+$headers[] = 'Content-Type: text/html; charset=UTF-8';
+$headers[] = 'From: ' . FROM_NAME . ' <' . FROM_EMAIL . '>';
+if ($validated_email !== '') {
+  $headers[] = 'Reply-To: <' . $validated_email . '>';
+}
+$headers[] = 'X-Mailer: PHP/' . phpversion();
+
+$sent = @mail(RECEIVING_EMAIL, SUBJECT, $body, implode("\r\n", $headers));
+if (!$sent) {
+  fail(500);
+}
+
+ok();
+
+function text_field_from_server(string $key, int $min, int $max): string
+{
+  $value = isset($_SERVER[$key]) && is_string($_SERVER[$key]) ? trim($_SERVER[$key]) : '';
+  $value = preg_replace('/[\x00-\x1F\x7F]+/u', '', $value) ?? '';
+  if (text_length($value) < $min) {
+    return '';
+  }
+
+  if (text_length($value) > $max) {
+    return text_cut($value, $max);
+  }
+
+  return $value;
+}

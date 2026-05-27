@@ -991,6 +991,12 @@
               </div>
 
               <form action="forms/contact.php" method="post" class="php-email-form">
+                <div aria-hidden="true" style="position:absolute; left:-10000px; width:1px; height:1px; overflow:hidden;">
+                  <label for="website">Sitio web</label>
+                  <input type="text" name="website" id="website" tabindex="-1" autocomplete="off">
+                </div>
+
+                <input type="hidden" name="form_started_at" value="">
 
                 <div class="row">
                   <div class="col-md-6 form-group">
@@ -1189,6 +1195,11 @@
   <div id="preloader"></div>
 
   <!-- Vendor JS Files -->
+  <script>
+    document.querySelectorAll('input[name="form_started_at"]').forEach(function (field) {
+      field.value = Math.floor(Date.now() / 1000).toString();
+    });
+  </script>
   <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="assets/vendor/php-email-form/validate.js"></script>
   <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
