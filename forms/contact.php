@@ -11,6 +11,19 @@ const RATE_LIMIT_WINDOW = 3600;
 
 header('Content-Type: text/plain; charset=UTF-8');
 
+$secure_session = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
+session_set_cookie_params([
+  'lifetime' => 0,
+  'path' => '/',
+  'secure' => $secure_session,
+  'httponly' => true,
+  'samesite' => 'Lax',
+]);
+
+if (session_status() !== PHP_SESSION_ACTIVE) {
+  session_start();
+}
+
 $allowed_services = [
   'Televisor',
   'Iluminación LED',
@@ -22,15 +35,17 @@ $allowed_services = [
   'Diagnóstico a domicilio',
 ];
 
-function fail(int $status = 400): void
+function fail(string $event = 'validation_failed', int $status = 400): void
 {
+  log_event($event);
   http_response_code($status);
   echo 'No fue posible enviar el mensaje. Inténtalo nuevamente o contáctanos por WhatsApp.';
   exit;
 }
 
-function ok(): void
+function ok(string $event = 'ok'): void
 {
+  log_event($event);
   echo 'OK';
   exit;
 }
@@ -43,11 +58,11 @@ function text_field(string $key, int $min, int $max, bool $required = true): str
 
   $length = text_length($value);
   if ($required && $length < $min) {
-    fail();
+    fail('validation_failed');
   }
 
   if ($length > $max) {
-    fail();
+    fail('validation_failed');
   }
 
   return $value;
@@ -66,7 +81,7 @@ function text_cut(string $value, int $max): string
 function reject_header_injection(string $value): void
 {
   if (preg_match('/[\r\n]/', $value)) {
-    fail();
+    fail('validation_failed');
   }
 }
 
@@ -79,7 +94,7 @@ function client_ip(): string
 function rate_limit_check(string $ip): void
 {
   $hash = hash('sha256', $ip);
-  $file = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'zeiner_contact_' . $hash . '.json';
+  $file = storage_path('rate-limit' . DIRECTORY_SEPARATOR . $hash . '.json');
   $now = time();
   $events = [];
 
@@ -101,7 +116,7 @@ function rate_limit_check(string $ip): void
       if (count($events) >= RATE_LIMIT_MAX) {
         flock($handle, LOCK_UN);
         fclose($handle);
-        fail(429);
+        fail('rate_limit', 429);
       }
 
       $events[] = $now;
@@ -118,6 +133,33 @@ function rate_limit_check(string $ip): void
   }
 }
 
+function storage_path(string $relative): string
+{
+  $base = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'storage';
+  $path = $base . DIRECTORY_SEPARATOR . $relative;
+  $dir = dirname($path);
+
+  if (!is_dir($dir)) {
+    @mkdir($dir, 0755, true);
+  }
+
+  return $path;
+}
+
+function log_event(string $event, array $context = []): void
+{
+  $file = storage_path('logs' . DIRECTORY_SEPARATOR . 'contact.log');
+  $payload = array_merge([
+    'event' => $event,
+    'time' => date('c'),
+    'ip_hash' => hash('sha256', client_ip()),
+    'method' => $_SERVER['REQUEST_METHOD'] ?? '',
+    'user_agent_hash' => hash('sha256', text_field_from_server('HTTP_USER_AGENT', 0, 180)),
+  ], $context);
+
+  @file_put_contents($file, json_encode($payload, JSON_UNESCAPED_UNICODE) . PHP_EOL, FILE_APPEND | LOCK_EX);
+}
+
 function safe_html(string $value): string
 {
   return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
@@ -130,16 +172,24 @@ function safe_header_text(string $value): string
 }
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
-  fail(405);
+  fail('invalid_method', 405);
 }
 
+log_event('submission_attempt');
+
 if (!empty($_POST['website'] ?? '')) {
-  ok();
+  ok('honeypot_triggered');
+}
+
+$posted_token = isset($_POST['csrf_token']) && is_string($_POST['csrf_token']) ? $_POST['csrf_token'] : '';
+$session_token = isset($_SESSION['csrf_token']) && is_string($_SESSION['csrf_token']) ? $_SESSION['csrf_token'] : '';
+if ($posted_token === '' || $session_token === '' || !hash_equals($session_token, $posted_token)) {
+  fail('csrf_invalid');
 }
 
 $started_at = isset($_POST['form_started_at']) && is_string($_POST['form_started_at']) ? (int) $_POST['form_started_at'] : 0;
 if ($started_at <= 0 || (time() - $started_at) < MIN_FORM_SECONDS || (time() - $started_at) > 86400) {
-  fail();
+  fail('validation_failed');
 }
 
 rate_limit_check(client_ip());
@@ -151,11 +201,16 @@ $service = text_field('subject', 2, 60);
 $message = text_field('message', 10, 1500);
 
 if (!preg_match('/^\+?[0-9\s\-\(\)]{7,30}$/', $phone)) {
-  fail();
+  fail('validation_failed');
 }
 
 if (!in_array($service, $allowed_services, true)) {
-  fail();
+  fail('validation_failed');
+}
+
+$privacy_consent = isset($_POST['privacy_consent']) && $_POST['privacy_consent'] === '1';
+if (!$privacy_consent) {
+  fail('validation_failed');
 }
 
 $validated_email = '';
@@ -163,7 +218,7 @@ if ($email !== '') {
   reject_header_injection($email);
   $validated_email = filter_var($email, FILTER_VALIDATE_EMAIL) ? $email : '';
   if ($validated_email === '') {
-    fail();
+    fail('validation_failed');
   }
 }
 
@@ -198,10 +253,10 @@ $headers[] = 'X-Mailer: PHP/' . phpversion();
 
 $sent = @mail(RECEIVING_EMAIL, SUBJECT, $body, implode("\r\n", $headers));
 if (!$sent) {
-  fail(500);
+  fail('send_failed', 500);
 }
 
-ok();
+ok('send_success');
 
 function text_field_from_server(string $key, int $min, int $max): string
 {
