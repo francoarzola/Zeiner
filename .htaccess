@@ -10,6 +10,10 @@ ErrorDocument 404 /404.html
 # Pagina comun para accesos bloqueados.
 ErrorDocument 403 /404.html
 
+# Redirecciones de URLs legales antiguas a URLs en espanol.
+Redirect 301 /privacy.html /politica-privacidad.html
+Redirect 301 /terms.html /terminos-condiciones.html
+
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
