@@ -292,3 +292,17 @@
     }
   }
 }
+
+@media (max-width: 767px) {
+  .how-we-work {
+    .process-card {
+      border-bottom: 1px solid rgba(167, 173, 179, 0.24);
+    }
+
+    .process-grid > [class*="col-"]:last-child {
+      .process-card {
+        border-bottom: none;
+      }
+    }
+  }
+}

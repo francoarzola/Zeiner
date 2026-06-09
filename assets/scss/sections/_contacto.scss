@@ -129,179 +129,229 @@
   }
 
   .contact-form-container {
-    padding: 30px;
-    border-radius: 18px;
-    background: rgba(255, 255, 255, 0.82);
-    border: 1px solid rgba(167, 173, 179, 0.22);
-    box-shadow:
-      0 18px 42px rgba(8, 10, 12, 0.06),
-      0 3px 10px rgba(8, 10, 12, 0.03);
+  padding: 30px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(167, 173, 179, 0.22);
+  box-shadow:
+    0 18px 42px rgba(8, 10, 12, 0.06),
+    0 3px 10px rgba(8, 10, 12, 0.03);
 
-    .form-heading {
-      margin-bottom: 24px;
+  .form-heading {
+    margin-bottom: 24px;
 
-      .form-kicker {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 14px;
-        color: #0F6B35;
-        font-size: 0.72rem;
-        font-weight: 800;
-        letter-spacing: 1.8px;
-        text-transform: uppercase;
+    .form-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      color: #0F6B35;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
 
-        &::before {
-          content: "";
-          width: 28px;
-          height: 2px;
-          display: inline-block;
-          background: #0F6B35;
-          border-radius: 999px;
-        }
-      }
-
-      h3 {
-        font-size: 1.45rem;
-        font-weight: 850;
-        color: #1B1F23;
-        margin-bottom: 10px;
-        letter-spacing: -0.03em;
-      }
-
-      p {
-        font-size: 0.95rem;
-        line-height: 1.7;
-        color: rgba(27, 31, 35, 0.68);
-        margin: 0;
-
-        strong {
-          color: #0F6B35;
-          font-weight: 850;
-        }
+      &::before {
+        content: "";
+        width: 28px;
+        height: 2px;
+        display: inline-block;
+        background: #0F6B35;
+        border-radius: 999px;
       }
     }
 
-    .php-email-form {
-      .form-control {
-        min-height: 48px;
-        padding: 12px 14px;
-        border-radius: 8px;
-        border: 1px solid rgba(167, 173, 179, 0.34);
-        background: rgba(247, 249, 248, 0.72);
-        color: #1B1F23;
-        font-size: 0.94rem;
-        transition: 0.28s ease;
-        box-shadow: none;
+    h3 {
+      font-size: 1.45rem;
+      font-weight: 850;
+      color: #1B1F23;
+      margin-bottom: 10px;
+      letter-spacing: -0.03em;
+    }
 
-        &::placeholder {
-          color: rgba(27, 31, 35, 0.48);
-        }
+    p {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: rgba(27, 31, 35, 0.68);
+      margin: 0;
 
-        &:focus {
-          border-color: rgba(15, 107, 53, 0.48);
-          background: #ffffff;
-          box-shadow: 0 0 0 4px rgba(15, 107, 53, 0.08);
-        }
+      strong {
+        color: #0F6B35;
+        font-weight: 850;
+      }
+    }
+  }
+
+  .php-email-form {
+    .form-control {
+      min-height: 48px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(167, 173, 179, 0.34);
+      background: rgba(247, 249, 248, 0.72);
+      color: #1B1F23;
+      font-size: 0.94rem;
+      transition: 0.28s ease;
+      box-shadow: none;
+
+      &::placeholder {
+        color: rgba(27, 31, 35, 0.48);
       }
 
-      select.form-control {
-        cursor: pointer;
+      &:focus {
+        border-color: rgba(15, 107, 53, 0.48);
+        background: #ffffff;
+        box-shadow: 0 0 0 4px rgba(15, 107, 53, 0.08);
+      }
+    }
+
+    select.form-control {
+      cursor: pointer;
+    }
+
+    textarea.form-control {
+      min-height: 130px;
+      resize: vertical;
+    }
+
+    .form-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      background: rgba(15, 107, 53, 0.065);
+      color: rgba(27, 31, 35, 0.68);
+      font-size: 0.86rem;
+      line-height: 1.5;
+
+      i {
+        color: #0F6B35;
+        margin-top: 2px;
+        flex-shrink: 0;
+      }
+    }
+
+    .form-check {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .form-check-input {
+      width: 18px;
+      height: 18px;
+      min-width: 18px;
+      margin: 1px 0 0;
+      border-radius: 5px;
+      border: 1.5px solid rgba(167, 173, 179, 0.5);
+      background-color: rgba(247, 249, 248, 0.8);
+      cursor: pointer;
+      transition: 0.28s ease;
+      accent-color: #0F6B35;
+      flex-shrink: 0;
+
+      &:checked {
+        background-color: #0F6B35;
+        border-color: #0F6B35;
       }
 
-      textarea.form-control {
-        min-height: 130px;
-        resize: vertical;
+      &:focus {
+        box-shadow: 0 0 0 3px rgba(15, 107, 53, 0.12);
+        border-color: rgba(15, 107, 53, 0.5);
+        outline: none;
       }
+    }
 
-      .form-note {
-        display: flex;
-        align-items: flex-start;
-        gap: 8px;
-        margin-top: 14px;
-        padding: 12px 14px;
-        border-radius: 8px;
-        background: rgba(15, 107, 53, 0.065);
-        color: rgba(27, 31, 35, 0.68);
-        font-size: 0.86rem;
-        line-height: 1.5;
+    .form-check-label {
+      font-size: 0.875rem;
+      line-height: 1.55;
+      color: rgba(27, 31, 35, 0.68);
+      cursor: pointer;
 
-        i {
-          color: #0F6B35;
-          margin-top: 2px;
-          flex-shrink: 0;
-        }
-      }
-
-      .loading,
-      .error-message,
-      .sent-message {
-        font-size: 0.9rem;
-      }
-
-      .sent-message {
+      a {
         color: #0F6B35;
         font-weight: 700;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+      }
+    }
+
+    .loading,
+    .error-message,
+    .sent-message {
+      font-size: 0.9rem;
+    }
+
+    .sent-message {
+      color: #ffffff;
+      background: #0F6B35;
+      font-weight: 700;
+      padding: 14px 16px;
+      border-radius: 8px;
+    }
+
+    .form-submit {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+
+      button,
+      .whatsapp-direct {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 46px;
+        padding: 12px 18px;
+        border-radius: 8px;
+        font-size: 0.92rem;
+        font-weight: 800;
+        line-height: 1;
+        text-decoration: none;
+        transition: 0.28s ease;
+        white-space: nowrap;
+
+        i {
+          font-size: 1rem;
+          line-height: 0;
+        }
       }
 
-      .form-submit {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 14px;
-        flex-wrap: wrap;
-        margin-top: 8px;
+      button {
+        color: #ffffff;
+        background: #0F6B35;
+        border: 1px solid #0F6B35;
 
-        button,
-        .whatsapp-direct {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          min-height: 46px;
-          padding: 12px 18px;
-          border-radius: 8px;
-          font-size: 0.92rem;
-          font-weight: 800;
-          line-height: 1;
-          text-decoration: none;
-          transition: 0.28s ease;
-          white-space: nowrap;
-
-          i {
-            font-size: 1rem;
-            line-height: 0;
-          }
+        &:hover {
+          background: #1E7C3B;
+          border-color: #1E7C3B;
+          transform: translateY(-2px);
+          box-shadow: 0 12px 28px rgba(15, 107, 53, 0.20);
         }
+      }
 
-        button {
+      .whatsapp-direct {
+        color: #0F6B35;
+        background: rgba(15, 107, 53, 0.075);
+        border: 1px solid rgba(15, 107, 53, 0.22);
+
+        &:hover {
           color: #ffffff;
           background: #0F6B35;
-          border: 1px solid #0F6B35;
-
-          &:hover {
-            background: #1E7C3B;
-            border-color: #1E7C3B;
-            transform: translateY(-2px);
-            box-shadow: 0 12px 28px rgba(15, 107, 53, 0.20);
-          }
-        }
-
-        .whatsapp-direct {
-          color: #0F6B35;
-          background: rgba(15, 107, 53, 0.075);
-          border: 1px solid rgba(15, 107, 53, 0.22);
-
-          &:hover {
-            color: #ffffff;
-            background: #0F6B35;
-            border-color: #0F6B35;
-            transform: translateY(-2px);
-          }
+          border-color: #0F6B35;
+          transform: translateY(-2px);
+          box-shadow: 0 10px 24px rgba(15, 107, 53, 0.20);
         }
       }
     }
   }
+}
 
   @media (max-width: 1199px) {
     .contact-main-wrapper {
