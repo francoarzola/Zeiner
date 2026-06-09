@@ -1,2 +1,23 @@
+# Logs / runtime
 storage/logs/*.log
 storage/rate-limit/*.json
+
+# Node / Sass
+node_modules/
+.sass-cache/
+
+# Editor / sistema
+.vscode/
+Thumbs.db
+.DS_Store
+
+# Backups y comprimidos
+*.zip
+*.rar
+*.7z
+*.bak
+*.old
+*.tmp
+
+# Archivos de mapas CSS si no quieres subirlos
+*.css.map

@@ -66,15 +66,16 @@
   }
 
   .service-num {
-    font-size: 38px;
-    font-weight: 800;
-    line-height: 1;
-    color: rgba(15, 107, 53, 0.18);
-    flex-shrink: 0;
-    min-width: 58px;
-    font-family: var(--heading-font);
-    letter-spacing: -0.05em;
-  }
+  font-size: 38px;
+  font-weight: 800;
+  line-height: 1;
+  color: rgba(15, 107, 53, 0.18);
+  flex-shrink: 0;
+  min-width: 58px;
+  font-family: var(--heading-font);
+  letter-spacing: -0.05em;
+  transition: color 0.28s ease;
+}
 
   .service-body {
     position: relative;
