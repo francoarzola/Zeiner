@@ -117,41 +117,6 @@
   }
 
   /**
-   * Initiate GLightbox
-   * Solo se ejecuta si la librería existe y hay elementos .glightbox.
-   */
-  if (typeof GLightbox !== 'undefined' && document.querySelector('.glightbox')) {
-    GLightbox({
-      selector: '.glightbox'
-    });
-  }
-
-  /**
-   * Initiate Pure Counter
-   * Solo se ejecuta si la librería existe.
-   */
-  if (typeof PureCounter !== 'undefined') {
-    new PureCounter();
-  }
-
-  /**
-   * Initiate AOS
-   * Importante: el sitio usa data-aos en varias secciones.
-   */
-  function initAOS() {
-    if (typeof AOS !== 'undefined') {
-      AOS.init({
-        duration: 650,
-        easing: 'ease-in-out',
-        once: true,
-        mirror: false
-      });
-    }
-  }
-
-  window.addEventListener('load', initAOS);
-
-  /**
    * Frequently Asked Questions Toggle
    * Mejorado: solo escucha el header y activa/desactiva el .faq-item correspondiente.
    */
@@ -164,40 +129,6 @@
       }
     });
   });
-
-  /**
-   * Init swiper sliders
-   * Solo se ejecuta si existe Swiper y hay elementos .init-swiper.
-   */
-  function initSwiper() {
-    if (typeof Swiper === 'undefined') return;
-
-    document.querySelectorAll('.init-swiper').forEach(function(swiperElement) {
-      const configElement = swiperElement.querySelector('.swiper-config');
-
-      if (!configElement) return;
-
-      let config;
-
-      try {
-        config = JSON.parse(configElement.innerHTML.trim());
-      } catch (error) {
-        console.warn('Swiper config inválida:', error);
-        return;
-      }
-
-      if (
-        swiperElement.classList.contains('swiper-tab') &&
-        typeof initSwiperWithCustomPagination === 'function'
-      ) {
-        initSwiperWithCustomPagination(swiperElement, config);
-      } else {
-        new Swiper(swiperElement, config);
-      }
-    });
-  }
-
-  window.addEventListener('load', initSwiper);
 
   /**
    * Correct scrolling position upon page load for URLs containing hash links.

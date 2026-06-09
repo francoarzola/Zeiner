@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 const RECEIVING_EMAIL = 'contacto@zeiner.cl';
-const FROM_EMAIL = 'no-reply@zeiner.cl';
+const FROM_EMAIL = 'contacto@zeiner.cl';
 const FROM_NAME = 'Sitio web ZEINER Electronica';
 const SUBJECT = 'Nueva consulta desde sitio web ZEINER Electrónica';
 const MIN_FORM_SECONDS = 3;
