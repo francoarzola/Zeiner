@@ -17,6 +17,11 @@ Redirect 301 /terms.html /terminos-condiciones.html
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
+  # Redirigir www a non-www para evitar duplicidad SEO.
+  # Canonical del sitio: https://zeiner.cl/
+  RewriteCond %{HTTP_HOST} ^www\.zeiner\.cl$ [NC]
+  RewriteRule ^ https://zeiner.cl%{REQUEST_URI} [R=301,L]
+
   # Forzar HTTPS cuando el certificado SSL ya este activo en cPanel/AutoSSL.
   # La excepcion local evita molestias en entornos de prueba.
   RewriteCond %{HTTPS} !=on
@@ -31,7 +36,7 @@ Redirect 301 /terms.html /terminos-condiciones.html
 </IfModule>
 
 # Bloqueo de archivos de desarrollo, respaldos, fuentes o datos sensibles.
-<FilesMatch "(^composer\.(json|lock)$|^package(-lock)?\.json$|^vite\.config\..*$|^webpack\.config\..*$|\.sql$|\.bak$|\.backup$|\.old$|\.zip$|\.tar$|\.gz$|\.log$|^README\.md$|^Readme\.txt$)">
+<FilesMatch "(^composer\.(json|lock)$|^package(-lock)?\.json$|^vite\.config\..*$|^webpack\.config\..*$|\.sql$|\.bak$|\.backup$|\.old$|\.zip$|\.tar$|\.gz$|\.log$|\.map$|^README\.md$|^Readme\.txt$)">
   <IfModule mod_authz_core.c>
     Require all denied
   </IfModule>
