@@ -1,52 +1,68 @@
 # ZEINER Electronica - configuracion prudente para Apache/cPanel
-# Revisar en staging antes de publicar en produccion.
+
+# Ubicacion esperada: /home/jjvxkghg/apps/zeiner/public/.htaccess
+
+# Canonical del sitio: https://zeiner.cl/
 
 # Evita listado de directorios si falta un index.
+
 Options -Indexes
 
 # Pagina 404 personalizada.
+
 ErrorDocument 404 /404.html
 
 # Pagina comun para accesos bloqueados.
+
 ErrorDocument 403 /404.html
 
 # Redirecciones de URLs legales antiguas a URLs en espanol.
+
 Redirect 301 /privacy.html /politica-privacidad.html
 Redirect 301 /terms.html /terminos-condiciones.html
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
-  # Redirigir www a non-www para evitar duplicidad SEO.
-  # Canonical del sitio: https://zeiner.cl/
-  RewriteCond %{HTTP_HOST} ^www\.zeiner\.cl$ [NC]
-  RewriteRule ^ https://zeiner.cl%{REQUEST_URI} [R=301,L]
+# No interferir con validaciones SSL/AutoSSL de cPanel.
 
-  # Forzar HTTPS cuando el certificado SSL ya este activo en cPanel/AutoSSL.
-  # La excepcion local evita molestias en entornos de prueba.
-  RewriteCond %{HTTPS} !=on
-  RewriteCond %{HTTP_HOST} !^(localhost|127\.0\.0\.1)(:\d+)?$ [NC]
-  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+RewriteRule ^.well-known/acme-challenge/ - [L]
 
-  # Bloquear archivos ocultos, sin bloquear .well-known usado por SSL/validaciones.
-  RewriteRule (^|/)\.(?!well-known/) - [F]
+# Redirigir cualquier dominio alternativo al dominio oficial.
 
-  # Bloquear carpetas internas si por error se suben a public_html.
-  RewriteRule ^(storage|docs)(/|$) - [F]
-</IfModule>
+# Esto controla [www.zeiner.cl](http://www.zeiner.cl) y el subdominio tecnico zeiner.dasystems.cl.
+
+RewriteCond %{HTTP_HOST} !^zeiner.cl$ [NC]
+RewriteCond %{HTTP_HOST} !^(localhost|127.0.0.1)(:\d+)?$ [NC]
+RewriteRule ^ [https://zeiner.cl%{REQUEST_URI}](https://zeiner.cl%{REQUEST_URI}) [R=301,L]
+
+# Forzar HTTPS en el dominio oficial.
+
+RewriteCond %{HTTPS} !=on
+RewriteCond %{HTTP_HOST} ^zeiner.cl$ [NC]
+RewriteRule ^ [https://zeiner.cl%{REQUEST_URI}](https://zeiner.cl%{REQUEST_URI}) [R=301,L]
+
+# Bloquear archivos ocultos, sin bloquear .well-known usado por SSL/validaciones.
+
+RewriteRule (^|/).(?!well-known/) - [F]
+
+# Bloquear carpetas internas si por error se suben al directorio publico.
+
+RewriteRule ^(storage|docs|database|resources|routes|vendor|node_modules)(/|$) - [F] </IfModule>
 
 # Bloqueo de archivos de desarrollo, respaldos, fuentes o datos sensibles.
-<FilesMatch "(^composer\.(json|lock)$|^package(-lock)?\.json$|^vite\.config\..*$|^webpack\.config\..*$|\.sql$|\.bak$|\.backup$|\.old$|\.zip$|\.tar$|\.gz$|\.log$|\.map$|^README\.md$|^Readme\.txt$)">
-  <IfModule mod_authz_core.c>
-    Require all denied
-  </IfModule>
-  <IfModule !mod_authz_core.c>
-    Deny from all
-  </IfModule>
-</FilesMatch>
 
-# Headers basicos de seguridad. No se agrega CSP estricta en esta fase para no romper
-# Google Fonts, Google Maps, scripts locales, BootstrapMade ni futuras integraciones.
+<FilesMatch "(^composer.(json|lock)$|^package(-lock)?.json$|^vite.config..*$|^webpack.config..*$|^artisan$|^.env$|.sql$|.bak$|.backup$|.old$|.zip$|.tar$|.gz$|.log$|.map$|^README.md$|^Readme.txt$)"> <IfModule mod_authz_core.c>
+Require all denied </IfModule>
+<IfModule !mod_authz_core.c>
+Deny from all </IfModule> </FilesMatch>
+
+# Headers basicos de seguridad.
+
+# No se agrega CSP estricta en esta fase para no romper Google Fonts,
+
+# Google Maps, scripts locales, BootstrapMade ni futuras integraciones.
+
 <IfModule mod_headers.c>
   Header always set X-Content-Type-Options "nosniff"
   Header always set X-Frame-Options "SAMEORIGIN"
@@ -55,6 +71,7 @@ Redirect 301 /terms.html /terminos-condiciones.html
 </IfModule>
 
 # Cache basica para assets estaticos. HTML/PHP queda sin cache agresiva.
+
 <IfModule mod_expires.c>
   ExpiresActive On
   ExpiresByType text/css "access plus 1 month"
@@ -68,6 +85,7 @@ Redirect 301 /terms.html /terminos-condiciones.html
 </IfModule>
 
 # Compresion opcional si mod_deflate esta disponible.
+
 <IfModule mod_deflate.c>
   AddOutputFilterByType DEFLATE text/html text/plain text/css application/javascript application/json image/svg+xml
 </IfModule>
