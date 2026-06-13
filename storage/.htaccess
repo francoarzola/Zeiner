@@ -1,7 +1,19 @@
-# Bloquea acceso web a almacenamiento operacional.
+# ZEINER Electronica - bloqueo de storage
+# Ubicacion:
+# /home/jjvxkghg/apps/zeiner/public/storage/.htaccess
+#
+# Esta carpeta no debe ser navegable ni descargable desde la web.
+
+Options -Indexes
+
+ErrorDocument 403 /404.html
+ErrorDocument 404 /404.html
+
 <IfModule mod_authz_core.c>
   Require all denied
 </IfModule>
+
 <IfModule !mod_authz_core.c>
+  Order allow,deny
   Deny from all
 </IfModule>
