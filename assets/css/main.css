@@ -1461,7 +1461,7 @@ section,
 .about .trust-strip {
   margin-top: 72px;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 18px;
 }
 .about .trust-item {
@@ -1513,6 +1513,7 @@ section,
     font-size: clamp(2rem, 4vw, 2.7rem);
   }
   .about .trust-strip {
+    grid-template-columns: repeat(2, 1fr);
     gap: 16px;
   }
   .about .trust-item {
@@ -1775,8 +1776,9 @@ section,
   margin-top: 3.5rem;
   padding: 2.5rem;
   border-radius: 16px;
-  background-color: rgba(167, 173, 179, 0.08);
+  background-color: rgba(167, 173, 179, 0.14);
   border: 1px solid rgba(167, 173, 179, 0.28);
+  border-left: 4px solid rgba(15, 107, 53, 0.45);
   box-shadow: 0 12px 28px rgba(8, 10, 12, 0.035);
 }
 .services .not-repaired-block h3 {
@@ -2268,36 +2270,42 @@ section,
 }
 @media (max-width: 767px) {
   .features {
-    padding: 64px 0 72px;
+    padding: 54px 0 58px;
   }
   .features .feature-card {
     border-radius: 14px;
   }
   .features .card-visual {
-    min-height: 112px;
-    padding: 24px;
+    min-height: 82px;
+    padding: 16px 18px;
   }
   .features .feature-visual-icon {
-    width: 56px;
-    height: 56px;
-    border-radius: 14px;
-    font-size: 1.55rem;
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    font-size: 1.28rem;
   }
   .features .card-body-content {
-    padding: 24px 20px 22px;
+    padding: 18px 18px 18px;
   }
   .features .card-body-content h3 {
-    font-size: 1.08rem;
+    font-size: 1.02rem;
+    margin-bottom: 8px;
   }
   .features .card-body-content p {
-    font-size: 0.9rem;
-    margin-bottom: 18px;
+    font-size: 0.88rem;
+    line-height: 1.58;
+    margin-bottom: 12px;
+  }
+  .features .card-badge {
+    margin-bottom: 12px;
   }
   .features .feature-list {
-    padding-top: 16px;
+    padding-top: 12px;
   }
   .features .feature-list li {
-    font-size: 0.86rem;
+    font-size: 0.84rem;
+    margin-bottom: 7px;
   }
 }
 
@@ -2845,6 +2853,12 @@ section,
   .contacto .contact-main-wrapper {
     grid-template-columns: 1fr;
   }
+  .contacto .contact-content {
+    order: 1;
+  }
+  .contacto .map-wrapper {
+    order: 2;
+  }
   .contacto .map-wrapper {
     min-height: 420px;
   }
@@ -2889,6 +2903,9 @@ section,
   }
   .contacto .contact-form-container .form-heading p {
     font-size: 0.9rem;
+  }
+  .contacto .contact-form-container .php-email-form textarea.form-control {
+    min-height: 96px;
   }
   .contacto .contact-form-container .php-email-form .form-submit {
     flex-direction: column;
