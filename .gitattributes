@@ -1,12 +1,16 @@
-﻿docs/ export-ignore
+.gitattributes export-ignore
+.gitignore export-ignore
+
+docs/** export-ignore
 README.md export-ignore
 Readme.txt export-ignore
 package.json export-ignore
 package-lock.json export-ignore
-.gitignore export-ignore
-assets/scss/ export-ignore
-assets/vendor/swiper/ export-ignore
-assets/vendor/glightbox/ export-ignore
-assets/vendor/purecounter/ export-ignore
+
+assets/scss/** export-ignore
+assets/vendor/swiper/** export-ignore
+assets/vendor/glightbox/** export-ignore
+assets/vendor/purecounter/** export-ignore
 assets/vendor/php-email-form/php-email-form.php export-ignore
+
 *.zip export-ignore
