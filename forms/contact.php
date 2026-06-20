@@ -5,6 +5,7 @@ const RECEIVING_EMAIL = 'contacto@zeiner.cl';
 const FROM_EMAIL = 'contacto@zeiner.cl';
 const FROM_NAME = 'Sitio web ZEINER Electronica';
 const SUBJECT = 'Nueva consulta desde sitio web ZEINER Electrónica';
+const CUSTOMER_REPLY_SUBJECT = 'Hemos recibido su contacto | ZEINER Electrónica';
 const MIN_FORM_SECONDS = 1;
 const RATE_LIMIT_MAX = 5;
 const RATE_LIMIT_WINDOW = 3600;
@@ -255,6 +256,39 @@ $encoded_subject = '=?UTF-8?B?' . base64_encode(SUBJECT) . '?=';
 $sent = @mail(RECEIVING_EMAIL, $encoded_subject, $body, implode("\r\n", $headers), '-f ' . FROM_EMAIL);
 if (!$sent) {
   fail('send_failed', 500);
+}
+
+if ($validated_email !== '') {
+  $customer_body = '<!DOCTYPE html><html lang="es"><body style="margin:0; padding:0; background:#f5f5f5; font-family:Arial, Helvetica, sans-serif; color:#1B1F23;">';
+  $customer_body .= '<div style="max-width:620px; margin:0 auto; padding:28px 16px;">';
+  $customer_body .= '<div style="background:#ffffff; border:1px solid #e2e5e3; border-radius:10px; padding:28px; box-shadow:0 8px 24px rgba(8,10,12,0.06);">';
+  $customer_body .= '<div style="text-align:center; margin-bottom:24px;"><img src="https://zeiner.cl/assets/img/uploads/logowebzeiner2.png" alt="ZEINER Electrónica" width="220" style="max-width:220px; height:auto;"></div>';
+  $customer_body .= '<div style="border-left:4px solid #0F6B35; padding-left:16px; margin-bottom:20px;">';
+  $customer_body .= '<h1 style="margin:0 0 10px; font-size:22px; line-height:1.3; color:#0F6B35;">Mensaje recibido correctamente</h1>';
+  $customer_body .= '<p style="margin:0; font-size:15px; line-height:1.65;">Muchas gracias por su contacto.</p>';
+  $customer_body .= '</div>';
+  $customer_body .= '<p style="font-size:15px; line-height:1.7; margin:0 0 16px;">Hemos recibido correctamente su mensaje a través del sitio web de ZEINER Electrónica.</p>';
+  $customer_body .= '<p style="font-size:15px; line-height:1.7; margin:0 0 20px;">Revisaremos la información enviada y nos pondremos en contacto a la brevedad, ya sea por teléfono, WhatsApp o correo electrónico, según los datos que nos haya proporcionado.</p>';
+  $customer_body .= '<p style="font-size:15px; line-height:1.7; margin:0 0 20px;"><strong>ZEINER Electrónica</strong><br>Más de 35 años en electrónica<br>La Reina, Santiago<br>WhatsApp: <a href="https://wa.me/56984469093" style="color:#0F6B35; font-weight:700; text-decoration:none;">+56 9 8446 9093</a></p>';
+  $customer_body .= '<p style="font-size:13px; line-height:1.6; margin:0; color:#5f666b;">Este correo confirma la recepción de su mensaje. No es necesario que vuelva a enviar el formulario.</p>';
+  $customer_body .= '</div></div></body></html>';
+
+  $customer_headers = [];
+  $customer_headers[] = 'MIME-Version: 1.0';
+  $customer_headers[] = 'Content-Type: text/html; charset=UTF-8';
+  $customer_headers[] = 'From: ZEINER Electrónica <' . FROM_EMAIL . '>';
+  $customer_headers[] = 'Reply-To: <' . FROM_EMAIL . '>';
+  $customer_headers[] = 'Return-Path: <' . FROM_EMAIL . '>';
+  $customer_headers[] = 'X-Mailer: PHP/' . phpversion();
+
+  $customer_encoded_subject = '=?UTF-8?B?' . base64_encode(CUSTOMER_REPLY_SUBJECT) . '?=';
+  $customer_sent = @mail($validated_email, $customer_encoded_subject, $customer_body, implode("\r\n", $customer_headers), '-f ' . FROM_EMAIL);
+
+  if ($customer_sent) {
+    log_event('customer_autoreply_sent');
+  } else {
+    log_event('customer_autoreply_failed');
+  }
 }
 
 ok('send_success');
