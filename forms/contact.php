@@ -184,11 +184,11 @@ function is_valid_chilean_mobile(string $phone): bool
   $normalized = preg_replace('/\D+/', '', $phone) ?? '';
 
   if (strlen($normalized) === 9) {
-    return str_starts_with($normalized, '9');
+    return substr($normalized, 0, 1) === '9';
   }
 
   if (strlen($normalized) === 11) {
-    return str_starts_with($normalized, '569');
+    return substr($normalized, 0, 3) === '569';
   }
 
   return false;
