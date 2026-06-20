@@ -118,6 +118,68 @@
   });
 
   /**
+   * Contact phone validation
+   */
+  const contactPhoneInput = document.querySelector('.php-email-form input[name="phone"]');
+  const contactForm = contactPhoneInput ? contactPhoneInput.closest('.php-email-form') : null;
+  const phoneValidationMessage = 'Ingresa un celular chileno válido, por ejemplo +56 9 8446 9093.';
+
+  function sanitizePhoneValue(value) {
+    return value.replace(/[^0-9\s\-\(\)\+]/g, '');
+  }
+
+  function isValidChileanMobile(value) {
+    if (!/^[0-9\s\-\(\)\+]+$/.test(value)) {
+      return false;
+    }
+
+    if ((value.match(/\+/g) || []).length > 1 || (value.includes('+') && value.indexOf('+') !== 0)) {
+      return false;
+    }
+
+    const normalized = value.replace(/\D+/g, '');
+
+    if (normalized.length === 9) {
+      return normalized.substring(0, 1) === '9';
+    }
+
+    if (normalized.length === 11) {
+      return normalized.substring(0, 3) === '569';
+    }
+
+    return false;
+  }
+
+  if (contactPhoneInput) {
+    contactPhoneInput.addEventListener('input', function() {
+      const sanitizedValue = sanitizePhoneValue(contactPhoneInput.value);
+
+      if (contactPhoneInput.value !== sanitizedValue) {
+        contactPhoneInput.value = sanitizedValue;
+      }
+
+      contactPhoneInput.setCustomValidity('');
+    });
+  }
+
+  if (contactForm && contactPhoneInput) {
+    contactForm.addEventListener('submit', function(event) {
+      const sanitizedValue = sanitizePhoneValue(contactPhoneInput.value);
+      contactPhoneInput.value = sanitizedValue;
+
+      if (!isValidChileanMobile(sanitizedValue)) {
+        contactPhoneInput.setCustomValidity(phoneValidationMessage);
+        contactPhoneInput.reportValidity();
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        return;
+      }
+
+      contactPhoneInput.setCustomValidity('');
+    }, true);
+  }
+
+  /**
    * Preloader
    */
   const preloader = document.querySelector('#preloader');
