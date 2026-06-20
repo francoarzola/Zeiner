@@ -28,7 +28,6 @@ $allowed_services = [
   'Televisor',
   'Iluminación LED',
   'Lavadora',
-  'Refrigerador',
   'Equipo de música',
   'Consola',
   'Electrónica general',
