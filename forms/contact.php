@@ -5,7 +5,7 @@ const RECEIVING_EMAIL = 'contacto@zeiner.cl';
 const FROM_EMAIL = 'contacto@zeiner.cl';
 const FROM_NAME = 'Sitio web ZEINER Electronica';
 const SUBJECT = 'Nueva consulta desde sitio web ZEINER Electrónica';
-const MIN_FORM_SECONDS = 3;
+const MIN_FORM_SECONDS = 1;
 const RATE_LIMIT_MAX = 5;
 const RATE_LIMIT_WINDOW = 3600;
 
@@ -246,12 +246,14 @@ $headers = [];
 $headers[] = 'MIME-Version: 1.0';
 $headers[] = 'Content-Type: text/html; charset=UTF-8';
 $headers[] = 'From: ' . FROM_NAME . ' <' . FROM_EMAIL . '>';
+$headers[] = 'Return-Path: <' . FROM_EMAIL . '>';
 if ($validated_email !== '') {
   $headers[] = 'Reply-To: <' . $validated_email . '>';
 }
 $headers[] = 'X-Mailer: PHP/' . phpversion();
 
-$sent = @mail(RECEIVING_EMAIL, SUBJECT, $body, implode("\r\n", $headers));
+$encoded_subject = '=?UTF-8?B?' . base64_encode(SUBJECT) . '?=';
+$sent = @mail(RECEIVING_EMAIL, $encoded_subject, $body, implode("\r\n", $headers), '-f ' . FROM_EMAIL);
 if (!$sent) {
   fail('send_failed', 500);
 }
