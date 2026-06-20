@@ -171,6 +171,29 @@ function safe_header_text(string $value): string
   return trim($value);
 }
 
+function is_valid_chilean_mobile(string $phone): bool
+{
+  if (!preg_match('/^[0-9\s\-\(\)\+]+$/', $phone)) {
+    return false;
+  }
+
+  if (substr_count($phone, '+') > 1 || (strpos($phone, '+') !== false && strpos($phone, '+') !== 0)) {
+    return false;
+  }
+
+  $normalized = preg_replace('/\D+/', '', $phone) ?? '';
+
+  if (strlen($normalized) === 9) {
+    return str_starts_with($normalized, '9');
+  }
+
+  if (strlen($normalized) === 11) {
+    return str_starts_with($normalized, '569');
+  }
+
+  return false;
+}
+
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
   fail('invalid_method', 405);
 }
@@ -195,12 +218,12 @@ if ($started_at <= 0 || (time() - $started_at) < MIN_FORM_SECONDS || (time() - $
 rate_limit_check(client_ip());
 
 $name = text_field('name', 2, 80);
-$phone = text_field('phone', 7, 30);
+$phone = text_field('phone', 7, 18);
 $email = text_field('email', 0, 120, false);
 $service = text_field('subject', 2, 60);
 $message = text_field('message', 10, 1500);
 
-if (!preg_match('/^\+?[0-9\s\-\(\)]{7,30}$/', $phone)) {
+if (!is_valid_chilean_mobile($phone)) {
   fail('validation_failed');
 }
 
