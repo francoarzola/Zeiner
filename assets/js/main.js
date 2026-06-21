@@ -122,7 +122,7 @@
    */
   const contactPhoneInput = document.querySelector('.php-email-form input[name="phone"]');
   const contactForm = contactPhoneInput ? contactPhoneInput.closest('.php-email-form') : null;
-  const phoneValidationMessage = 'Ingresa un celular chileno válido, por ejemplo +56 9 8446 9093.';
+  const phoneValidationMessage = 'Ingresa un número de celular válido, por ejemplo +56 9 8446 9093.';
 
   function sanitizePhoneValue(value) {
     return value.replace(/[^0-9\s\-\(\)\+]/g, '');
